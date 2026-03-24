@@ -25,8 +25,16 @@ class OSCTOOLSET_API UOSCT_Filters : public UBlueprintFunctionLibrary
 	
 public:
 	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Filters", meta = (ExpandEnumAsExecs = "Branches"))
-	static void FilterByAddress(const FOSCT_Receiver& InReceiver, const FString& MatchAddress, EOSCT_FilterResult& Branches);
+	static void FilterByAddress(
+		const FOSCT_Receiver& InReceiver, 
+		const FString& MatchAddress, 
+		FOSCT_Receiver& OutReceiver,
+		EOSCT_FilterResult& Branches);
 
 	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Filters", meta = (ExpandEnumAsExecs = "Branches"))
-	static void FilterByReceiver(const FOSCT_Receiver& InReceiver, const FOSCT_Receiver& MatchReceiver, EOSCT_FilterResult& Branches);
+	static void FilterByReceiver(
+		const FOSCT_Receiver& InReceiver, 
+		const FOSCT_Receiver& MatchReceiver, 
+		FOSCT_Receiver& OutReceiver, 
+		EOSCT_FilterResult& Branches);
 };
