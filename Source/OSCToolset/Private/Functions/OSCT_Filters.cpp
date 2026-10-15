@@ -5,9 +5,13 @@
 
 #include "OSCToolsetLog.h"
 
-void UOSCT_Filters::FilterByAddress(const FOSCT_Receiver& InReceiver, const FString& MatchAddress, EOSCT_FilterResult& Branches)
+void UOSCT_Filters::FilterByAddress(
+	const FOSCT_Receiver& InReceiver, 
+	const FString& MatchAddress, 
+	FOSCT_Receiver& OutReceiver,
+	EOSCT_FilterResult& Branches)
 {
-	
+	OutReceiver = InReceiver;
 	if (InReceiver.FormattedAddress.IsEmpty())
 	{
 		Branches = EOSCT_FilterResult::NoMatch;
@@ -22,8 +26,13 @@ void UOSCT_Filters::FilterByAddress(const FOSCT_Receiver& InReceiver, const FStr
 	Branches = EOSCT_FilterResult::NoMatch;
 }
 
-void UOSCT_Filters::FilterByReceiver(const FOSCT_Receiver& InReceiver, const FOSCT_Receiver& MatchReceiver, EOSCT_FilterResult& Branches)
+void UOSCT_Filters::FilterByReceiver(
+		const FOSCT_Receiver& InReceiver, 
+		const FOSCT_Receiver& MatchReceiver, 
+		FOSCT_Receiver& OutReceiver, 
+		EOSCT_FilterResult& Branches)
 {
+	OutReceiver = InReceiver;
 	// We check Address, Role, and ModuleType individually, which is inherent to FormattedAddress.
 	const bool bMatches = InReceiver.Address.Equals(MatchReceiver.Address, ESearchCase::IgnoreCase) && 
 		InReceiver.Role == MatchReceiver.Role &&
@@ -31,7 +40,9 @@ void UOSCT_Filters::FilterByReceiver(const FOSCT_Receiver& InReceiver, const FOS
 	if (bMatches)
 	{
 		Branches = EOSCT_FilterResult::Matches;
-		return;
 	}
-	Branches = EOSCT_FilterResult::NoMatch;
+	else
+	{
+		Branches = EOSCT_FilterResult::NoMatch;
+	}
 }
