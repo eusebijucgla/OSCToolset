@@ -20,8 +20,7 @@
 #include "OSCT_Master.generated.h"
 
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOSCTInit);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOSCTShutdown);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnOSCToolsetEvent);
 
 UCLASS()                  
 class OSCTOOLSET_API UOSCT_Master : public UGameInstanceSubsystem, public FTickableGameObject
@@ -81,14 +80,12 @@ public:
 	void Send_Transform(UPARAM(ref) FOSCT_Sender& Sender,  const FTransform& Value, UObject* Owner);
 	UFUNCTION()
 	void Send_String(UPARAM(ref) FOSCT_Sender& Sender, const FString& Value, UObject* Owner);
-
 	
-	// Delegate for the Init OSC.
-	UPROPERTY()
-	FOnOSCTInit OnInitOSCT;
+	UPROPERTY(BlueprintAssignable, BlueprintReadOnly, Category = "OSCToolset")
+	FOnOSCToolsetEvent OnOSCToolsetInitialized;
 
-	UPROPERTY()
-	FOnOSCTShutdown OnShutdownOSCT;
+	UPROPERTY(BlueprintAssignable, BlueprintReadOnly, Category = "OSCToolset")
+	FOnOSCToolsetEvent OnOSCToolsetShutdown;
 
 	UPROPERTY()
 	const UOSCT_Settings* Settings;
