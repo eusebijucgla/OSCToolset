@@ -237,6 +237,9 @@ TArray<TLink>* UpdateAndPrune(TMap<FName, TArray<TLink>>& TargetMap,
 		return LinkArray;
 	}
 	
+	//ExecFunc is the base Interface Event like GET_Float
+	//TickFunc is the interpolated version, this is called here for the first frame to receive the initial value on startup.
+	//The proxy broadcast is only fired when a proxy receiver is being fetched, see GetOrCreateProxy(const FOSCT_Receiver& Receiver)
 	template<typename TLink, typename TValue>
 	void RouteOSCMessage(
 		const FOSCMessage& Message,
@@ -245,7 +248,8 @@ TArray<TLink>* UpdateAndPrune(TMap<FName, TArray<TLink>>& TargetMap,
 		FName AddressKey,
 		TFunction<bool(const FOSCMessage&, TValue&)> ParseFunc,
 		TFunction<void(UObject*, const FOSCT_Receiver&, const TValue&)> ExecFunc,
-		TFunction<void(UObject*, const FOSCT_Receiver&, const TValue&)> TickFunc = nullptr)
+		TFunction<void(UObject*, const FOSCT_Receiver&, const TValue&)> TickFunc = nullptr,
+		TFunction<void(UOSCT_Proxy*, const TValue&)> ProxyBroadcastFunc = nullptr)
 		{
 			TValue ParsedValue;
 			if (ParseFunc(Message, ParsedValue))
@@ -267,6 +271,14 @@ TArray<TLink>* UpdateAndPrune(TMap<FName, TArray<TLink>>& TargetMap,
 						}
 					}
 				}
+				// Handle the Proxy Broadcast if a proxy exists!
+				if (UOSCT_Proxy** Proxy = ReceiverProxies.Find(AddressKey))
+				{
+					if (ProxyBroadcastFunc && *Proxy)
+					{
+						ProxyBroadcastFunc(*Proxy, ParsedValue);
+					}
+				}
 			}
 		}
 	
@@ -277,7 +289,8 @@ TArray<TLink>* UpdateAndPrune(TMap<FName, TArray<TLink>>& TargetMap,
 		FName Address, 
 		float DeltaTime, 
 		bool& bOutStillMoving, 
-		TFunction<void(UObject*, const TLink&, const typename TLink::ValueType&)> ExecuteFunc)
+		TFunction<void(UObject*, const TLink&, const typename TLink::ValueType&)> ExecuteFunc,
+		TFunction<void(UOSCT_Proxy*, const typename TLink::ValueType&)> ProxyBroadcastFunc = nullptr)
 	{
 		if (TArray<TLink>* Links = TargetMap.Find(Address))
 		{
@@ -297,6 +310,17 @@ TArray<TLink>* UpdateAndPrune(TMap<FName, TArray<TLink>>& TargetMap,
 						bOutStillMoving = true; //modifies the bool bAnyLinkStillMoving = false; from master::Tick func.
 					}
 					ExecuteFunc(L.Owner.Get(), L, L.CurrentValue);
+					// 2. Automatically broadcast the smoothed value to the proxy channel if active
+					if (ProxyBroadcastFunc)
+					{
+						if (UOSCT_Proxy** Proxy = ReceiverProxies.Find(Address))
+						{
+							if (*Proxy)
+							{
+								ProxyBroadcastFunc(*Proxy, L.CurrentValue);
+							}
+						}
+					}
 				}
 			}
 		}
@@ -323,6 +347,12 @@ TArray<TLink>* UpdateAndPrune(TMap<FName, TArray<TLink>>& TargetMap,
 		{
 			TargetMap.Remove(AddressKey);
 			CacheMap.Remove(AddressKey);
+			
+			// Clean up the shared proxy so it doesn't linger in memory
+			if (UOSCT_Proxy** FoundProxy = ReceiverProxies.Find(AddressKey))
+			{
+				ReceiverProxies.Remove(AddressKey);
+			}
 		}
     
 		return true;

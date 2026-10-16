@@ -825,122 +825,215 @@ void UOSCT_Master::RouteMessage(const FOSCMessage& InMessage, const FString& InA
     {
         switch (*RouteTypePtr)
         {
+        //SIGNLE VALUES
         case EOSCT_RouteType::FLOAT:
             RouteOSCMessage<FOSCT_FloatLink, float>(InMessage, FloatLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetFloat,
             &IOSCT_Router::Execute_GET_Float,
-            &IOSCT_Router::Execute_GET_Float_Tick);
+            &IOSCT_Router::Execute_GET_Float_Tick,
+            [](UOSCT_Proxy* Proxy, const float& Val) 
+            {Proxy->OnGET_Float.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::EVENT:
             RouteOSCMessage<FOSCT_EventLink, bool>(InMessage, EventLinks, AddressToType, AddressKey,
             [](const FOSCMessage& M, bool& Out) { Out = true; return true; },
-            [](UObject* Obj, const FOSCT_Receiver& D, bool V) { IOSCT_Router::Execute_GET_Event(Obj, D); });
+            [](UObject* Obj, const FOSCT_Receiver& D, bool V) { IOSCT_Router::Execute_GET_Event(Obj, D); },
+            nullptr,
+            [](UOSCT_Proxy* Proxy, bool DummyVal) 
+            {Proxy->OnGET_Event.Broadcast(Proxy->ReceiverConfig);}
+            );
             break;
         case EOSCT_RouteType::BOOL:
             RouteOSCMessage<FOSCT_BoolLink, bool>(InMessage, BoolLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetBool,
-            &IOSCT_Router::Execute_GET_Boolean);
+            &IOSCT_Router::Execute_GET_Boolean,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const bool& Val)
+            {Proxy->OnGET_Boolean.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::INT:
             RouteOSCMessage<FOSCT_IntegerLink, int32>(InMessage, IntegerLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetInteger,
-            &IOSCT_Router::Execute_GET_Integer);
+            &IOSCT_Router::Execute_GET_Integer,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const int32& Val)
+            {Proxy->OnGET_Integer.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::VEC2:
             RouteOSCMessage<FOSCT_Vector2Link, FVector2D>(InMessage, Vec2Links, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetVector2,
             &IOSCT_Router::Execute_GET_Vector2,
-            &IOSCT_Router::Execute_GET_Vector2_Tick);
+            &IOSCT_Router::Execute_GET_Vector2_Tick,
+            [](UOSCT_Proxy* Proxy, const FVector2D& Val)
+            {Proxy->OnGET_Vector2.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::VEC3:
             RouteOSCMessage<FOSCT_Vector3Link, FVector>(InMessage, Vec3Links, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetVector3,
             &IOSCT_Router::Execute_GET_Vector3,
-            &IOSCT_Router::Execute_GET_Vector3_Tick);
+            &IOSCT_Router::Execute_GET_Vector3_Tick,
+            [](UOSCT_Proxy* Proxy, const FVector& Val)
+            {Proxy->OnGET_Vector3.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::ROTATION:
             RouteOSCMessage<FOSCT_RotationLink, FRotator>(InMessage, RotationLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetRotation,
             &IOSCT_Router::Execute_GET_Rotation,
-            &IOSCT_Router::Execute_GET_Rotation_Tick);
+            &IOSCT_Router::Execute_GET_Rotation_Tick,
+            [](UOSCT_Proxy* Proxy, const FRotator& Val) 
+            {Proxy->OnGET_Rotation.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::COLOR:
             RouteOSCMessage<FOSCT_ColorLink, FLinearColor>(InMessage, ColorLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetColor,
             &IOSCT_Router::Execute_GET_Color,
-            &IOSCT_Router::Execute_GET_Color_Tick);
+            &IOSCT_Router::Execute_GET_Color_Tick,
+            [](UOSCT_Proxy* Proxy, const FLinearColor& Val) 
+            {Proxy->OnGET_Color.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::TRANSFORM:
             RouteOSCMessage<FOSCT_TransformLink, FTransform>(InMessage, TransformLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetTransform,
             &IOSCT_Router::Execute_GET_Transform,
-            &IOSCT_Router::Execute_GET_Transform_Tick);
+            &IOSCT_Router::Execute_GET_Transform_Tick,
+            [](UOSCT_Proxy* Proxy, const FTransform& Val) 
+            {Proxy->OnGET_Transform.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::STRING:
             RouteOSCMessage<FOSCT_StringLink, FString>(InMessage, StringLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetString,
-            &IOSCT_Router::Execute_GET_String);
+            &IOSCT_Router::Execute_GET_String,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const FString& Val) 
+            {Proxy->OnGET_String.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
         case EOSCT_RouteType::NOTE:
             RouteOSCMessage<FOSCT_NoteLink, FOSCT_Note>(InMessage, NoteLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetNotes,
-            &IOSCT_Router::Execute_GET_Notes);
+            &IOSCT_Router::Execute_GET_Notes,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const FOSCT_Note& Val) 
+            {Proxy->OnGET_Notes.Broadcast(Proxy->ReceiverConfig, Val);}
+            );
             break;
+        //PACKS
         case EOSCT_RouteType::FLOAT_PACK:
             RouteOSCMessage<FOSCT_FloatPackLink, TMap<FString, float>>(InMessage, FloatPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetFloatPack,
             &IOSCT_Router::Execute_GET_Float_Pack,
-            &IOSCT_Router::Execute_GET_Float_Pack_Tick);
+            &IOSCT_Router::Execute_GET_Float_Pack_Tick,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, float>& Val) {
+                FOSCT_FloatMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Float_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::EVENT_PACK:
             RouteOSCMessage<FOSCT_EventPackLink, TMap<FString, bool>>(InMessage, EventPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetEventPack,
-            &IOSCT_Router::Execute_GET_Event_Pack);
+            &IOSCT_Router::Execute_GET_Event_Pack,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, bool>& Val) {
+                FOSCT_BoolMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                // Assuming you have an OnGET_Event_Pack delegate declared on your proxy
+                Proxy->OnGET_Boolean_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::BOOL_PACK:
             RouteOSCMessage<FOSCT_BoolPackLink, TMap<FString, bool>>(InMessage, BoolPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetEventPack,
-            &IOSCT_Router::Execute_GET_Boolean_Pack);
+            &IOSCT_Router::Execute_GET_Boolean_Pack,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, bool>& Val) {
+                FOSCT_BoolMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Boolean_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::INT_PACK:
             RouteOSCMessage<FOSCT_IntegerPackLink, TMap<FString, int32>>(InMessage, IntegerPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetIntegerPack,
-            &IOSCT_Router::Execute_GET_Integer_Pack);
+            &IOSCT_Router::Execute_GET_Integer_Pack,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, int32>& Val) {
+                FOSCT_IntMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Integer_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::VEC2_PACK:
             RouteOSCMessage<FOSCT_Vector2PackLink, TMap<FString, FVector2D>>(InMessage, Vec2PackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetVector2Pack,
             &IOSCT_Router::Execute_GET_Vector2_Pack,
-            &IOSCT_Router::Execute_GET_Vector2_Pack_Tick);
+            &IOSCT_Router::Execute_GET_Vector2_Pack_Tick,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FVector2D>& Val) {
+                FOSCT_Vector2MapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Vector2_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::VEC3_PACK:
             RouteOSCMessage<FOSCT_Vector3PackLink, TMap<FString, FVector>>(InMessage, Vec3PackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetVector3Pack,
             &IOSCT_Router::Execute_GET_Vector3_Pack,
-            &IOSCT_Router::Execute_GET_Vector3_Pack_Tick);
+            &IOSCT_Router::Execute_GET_Vector3_Pack_Tick,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FVector>& Val) {
+                FOSCT_Vector3MapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Vector3_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::ROTATION_PACK:
             RouteOSCMessage<FOSCT_RotationPackLink, TMap<FString, FRotator>>(InMessage, RotationPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetRotationPack,
             &IOSCT_Router::Execute_GET_Rotation_Pack,
-            &IOSCT_Router::Execute_GET_Rotation_Pack_Tick);
+            &IOSCT_Router::Execute_GET_Rotation_Pack_Tick,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FRotator>& Val) {
+                FOSCT_RotationMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Rotation_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::COLOR_PACK:
             RouteOSCMessage<FOSCT_ColorPackLink, TMap<FString, FLinearColor>>(InMessage, ColorPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetColorPack,
             &IOSCT_Router::Execute_GET_Color_Pack,
-            &IOSCT_Router::Execute_GET_Color_Pack_Tick);
+            &IOSCT_Router::Execute_GET_Color_Pack_Tick,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FLinearColor>& Val) {
+                FOSCT_ColorMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Color_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;
         case EOSCT_RouteType::TRANSFORM_PACK:
             RouteOSCMessage<FOSCT_TransformPackLink, TMap<FString, FTransform>>(InMessage, TransformPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetTransformPack,
             &IOSCT_Router::Execute_GET_Transform_Pack,
-            &IOSCT_Router::Execute_GET_Transform_Pack_Tick);
+            &IOSCT_Router::Execute_GET_Transform_Pack_Tick,
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FTransform>& Val) {
+                FOSCT_TransformMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Transform_Pack.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            });
             break;          
         case EOSCT_RouteType::STRING_PACK:
             RouteOSCMessage<FOSCT_StringPackLink, TArray<FString>>(InMessage, StringPackLinks, AddressToType, AddressKey,
             &UOSCT_Parsing::TryGetStringPack,
-            &IOSCT_Router::Execute_GET_String_Pack);
+            &IOSCT_Router::Execute_GET_String_Pack,
+            nullptr,
+            [](UOSCT_Proxy* Proxy, const TArray<FString>& Val) {
+                Proxy->OnGET_String_Pack.Broadcast(Proxy->ReceiverConfig, Val);
+            });
             break;                    
         default:
             UE_LOG(OSCToolset, Warning, TEXT("Received a message not well formatted from a Receiver: %s"), *Address);
@@ -961,60 +1054,126 @@ void UOSCT_Master::Tick(float DeltaTime)
     {
         FName Address = *It;
         bool bAnyLinkStillMoving = false;
+        
         // Float
         ProcessActiveLinksTick<FOSCT_FloatLink>(FloatLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_FloatLink& Link, const float& Val) {
-            IOSCT_Router::Execute_GET_Float_Tick(Obj, Link.Data, Val);
-        });
+            [](UObject* Obj, const FOSCT_FloatLink& Link, const float& Val) {
+                IOSCT_Router::Execute_GET_Float_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, float Val) {
+                Proxy->OnGET_Float_Tick.Broadcast(Proxy->ReceiverConfig, Val);
+            }
+        );
         ProcessActiveLinksTick<FOSCT_FloatPackLink>(FloatPackLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_FloatPackLink& Link, const TMap < FString, float >& Val) {
-            IOSCT_Router::Execute_GET_Float_Pack_Tick(Obj, Link.Data, Val);
-        });
-        //Vector 2
+            [](UObject* Obj, const FOSCT_FloatPackLink& Link, const TMap < FString, float >& Val) {
+                IOSCT_Router::Execute_GET_Float_Pack_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, const TMap<FString, float>& Val) {
+                FOSCT_FloatMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Float_Pack_Tick.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            }
+        );
+        // Vector 2D
         ProcessActiveLinksTick<FOSCT_Vector2Link>(Vec2Links, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_Vector2Link& Link, const FVector2D& Val) {
-            IOSCT_Router::Execute_GET_Vector2_Tick(Obj, Link.Data, Val);
-        });
+            [](UObject* Obj, const FOSCT_Vector2Link& Link, const FVector2D& Val) {
+                IOSCT_Router::Execute_GET_Vector2_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, FVector2D Val) {
+                Proxy->OnGET_Vector2_Tick.Broadcast(Proxy->ReceiverConfig, Val);
+            }
+        );
+
         ProcessActiveLinksTick<FOSCT_Vector2PackLink>(Vec2PackLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_Vector2PackLink& Link, const TMap < FString, FVector2D >& Val) {
-            IOSCT_Router::Execute_GET_Vector2_Pack_Tick(Obj, Link.Data, Val);
-        });
-        //Vector 3
+            [](UObject* Obj, const FOSCT_Vector2PackLink& Link, const TMap<FString, FVector2D>& Val) {
+                IOSCT_Router::Execute_GET_Vector2_Pack_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FVector2D>& Val) {
+                FOSCT_Vector2MapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Vector2_Pack_Tick.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            }
+        );
+        // Vector 3D
         ProcessActiveLinksTick<FOSCT_Vector3Link>(Vec3Links, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_Vector3Link& Link, const FVector& Val) {
-            IOSCT_Router::Execute_GET_Vector3_Tick(Obj, Link.Data, Val);
-        });
+            [](UObject* Obj, const FOSCT_Vector3Link& Link, const FVector& Val) {
+                IOSCT_Router::Execute_GET_Vector3_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, FVector Val) {
+                Proxy->OnGET_Vector3_Tick.Broadcast(Proxy->ReceiverConfig, Val);
+            }
+        );
+
         ProcessActiveLinksTick<FOSCT_Vector3PackLink>(Vec3PackLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_Vector3PackLink& Link, const TMap < FString, FVector >& Val) {
-            IOSCT_Router::Execute_GET_Vector3_Pack_Tick(Obj, Link.Data, Val);
-        });
-        // //Rotation
+            [](UObject* Obj, const FOSCT_Vector3PackLink& Link, const TMap<FString, FVector>& Val) {
+                IOSCT_Router::Execute_GET_Vector3_Pack_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FVector>& Val) {
+                FOSCT_Vector3MapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Vector3_Pack_Tick.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            }
+        );
+        // Rotation
         ProcessActiveLinksTick<FOSCT_RotationLink>(RotationLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_RotationLink& Link, const FRotator& Val) {
-            IOSCT_Router::Execute_GET_Rotation_Tick(Obj, Link.Data, Val);
-        });
+            [](UObject* Obj, const FOSCT_RotationLink& Link, const FRotator& Val) {
+                IOSCT_Router::Execute_GET_Rotation_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, FRotator Val) {
+                Proxy->OnGET_Rotation_Tick.Broadcast(Proxy->ReceiverConfig, Val);
+            }
+        );
+
         ProcessActiveLinksTick<FOSCT_RotationPackLink>(RotationPackLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_RotationPackLink& Link, const TMap < FString, FRotator >& Val) {
-            IOSCT_Router::Execute_GET_Rotation_Pack_Tick(Obj, Link.Data, Val);
-        });
-        //Color
+            [](UObject* Obj, const FOSCT_RotationPackLink& Link, const TMap<FString, FRotator>& Val) {
+                IOSCT_Router::Execute_GET_Rotation_Pack_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FRotator>& Val) {
+                FOSCT_RotationMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Rotation_Pack_Tick.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            }
+        );
+        // Color
         ProcessActiveLinksTick<FOSCT_ColorLink>(ColorLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_ColorLink& Link, const FLinearColor& Val) {
-            IOSCT_Router::Execute_GET_Color_Tick(Obj, Link.Data, Val);
-        });
+            [](UObject* Obj, const FOSCT_ColorLink& Link, const FLinearColor& Val) {
+                IOSCT_Router::Execute_GET_Color_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, FLinearColor Val) {
+                Proxy->OnGET_Color_Tick.Broadcast(Proxy->ReceiverConfig, Val);
+            }
+        );
+
         ProcessActiveLinksTick<FOSCT_ColorPackLink>(ColorPackLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_ColorPackLink& Link, const TMap < FString, FLinearColor >& Val) {
-            IOSCT_Router::Execute_GET_Color_Pack_Tick(Obj, Link.Data, Val);
-        });
-        //Transform
+            [](UObject* Obj, const FOSCT_ColorPackLink& Link, const TMap<FString, FLinearColor>& Val) {
+                IOSCT_Router::Execute_GET_Color_Pack_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FLinearColor>& Val) {
+                FOSCT_ColorMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Color_Pack_Tick.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            }
+        );
+        // Transform
         ProcessActiveLinksTick<FOSCT_TransformLink>(TransformLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_TransformLink& Link, const FTransform& Val) {
-            IOSCT_Router::Execute_GET_Transform_Tick(Obj, Link.Data, Val);
-        });
+            [](UObject* Obj, const FOSCT_TransformLink& Link, const FTransform& Val) {
+                IOSCT_Router::Execute_GET_Transform_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, const FTransform& Val) {
+                Proxy->OnGET_Transform_Tick.Broadcast(Proxy->ReceiverConfig, Val);
+            }
+        );
+
         ProcessActiveLinksTick<FOSCT_TransformPackLink>(TransformPackLinks, Address, DeltaTime, bAnyLinkStillMoving, 
-        [](UObject* Obj, const FOSCT_TransformPackLink& Link, const TMap < FString, FTransform >& Val) {
-            IOSCT_Router::Execute_GET_Transform_Pack_Tick(Obj, Link.Data, Val);
-        });
+            [](UObject* Obj, const FOSCT_TransformPackLink& Link, const TMap<FString, FTransform>& Val) {
+                IOSCT_Router::Execute_GET_Transform_Pack_Tick(Obj, Link.Data, Val);
+            },
+            [](UOSCT_Proxy* Proxy, const TMap<FString, FTransform>& Val) {
+                FOSCT_TransformMapWrapper Wrapper;
+                Wrapper.Data = Val;
+                Proxy->OnGET_Transform_Pack_Tick.Broadcast(Proxy->ReceiverConfig, Wrapper);
+            }
+        );
         if (!bAnyLinkStillMoving) It.RemoveCurrent();
     }
 }
