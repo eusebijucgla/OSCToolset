@@ -87,6 +87,31 @@ struct FOSCT_Note
 	}
 };
 
+USTRUCT(BlueprintType)
+struct FOSCT_BoolMapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, bool> Data; };
+
+USTRUCT(BlueprintType)
+struct FOSCT_IntMapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, int32> Data; };
+
+USTRUCT(BlueprintType)
+struct FOSCT_FloatMapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, float> Data; };
+
+USTRUCT(BlueprintType)
+struct FOSCT_Vector2MapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, FVector2D> Data; };
+
+USTRUCT(BlueprintType)
+struct FOSCT_Vector3MapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, FVector> Data; };
+
+USTRUCT(BlueprintType)
+struct FOSCT_RotationMapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, FRotator> Data; };
+
+USTRUCT(BlueprintType)
+struct FOSCT_ColorMapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, FLinearColor> Data; };
+
+USTRUCT(BlueprintType)
+struct FOSCT_TransformMapWrapper { GENERATED_BODY(); UPROPERTY(BlueprintReadWrite, Category="OSCToolset") TMap<FString, FTransform> Data; };
+
+
 class OSCTOOLSET_API OSCT_ETypes
 {
 public:
