@@ -118,7 +118,7 @@ void UOSCT_Master::AddReceiversFromDataTable(UDataTable* InTable, UObject* Owner
 {
     if (!InTable)
     {
-        UE_LOG(LogTemp, Warning, TEXT("OSCT_Master: Register attempted with null table."));
+        UE_LOG(OSCToolset, Warning, TEXT("OSCT_Master: Register attempted with null table."));
         return;
     }
 
@@ -556,7 +556,6 @@ void UOSCT_Master::ReSendAllReceiversStateUpdate()
         // Pair.Value is the TArray<FOSCT_ReceiverLink>
         for (FOSCT_ReceiverLink& Link : Pair.Value)
         {
-            // Example: UE_LOG(LogTemp, Log, TEXT("Key: %s | Link Data: %s"), *Pair.Key.ToString(), *Link.SomeProperty);
             UOSCT_Functions::SendReceiverStateUpdate(OSCT_Clients, Link.Data, Link.GetOwner(), true);
         }
     }
