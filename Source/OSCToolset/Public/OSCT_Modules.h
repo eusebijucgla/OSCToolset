@@ -65,6 +65,32 @@ struct FOSCT_ReceiverRow: public FTableRowBase
 	FOSCT_ModuleDebug Debug;
 };
 
+
+USTRUCT(BlueprintType)
+struct FOSCT_ReceiverProxy
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OSCToolset")
+	FString Address;
+	
+	UPROPERTY()
+	EOSCT_Role Role = EOSCT_Role::RECEIVER;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "OSCToolset")
+	EOSCT_ModuleType ModuleType = EOSCT_ModuleType::FLOAT;
+	
+	UPROPERTY(
+		EditAnywhere, 
+		BlueprintReadWrite, 
+		Category = "OSCToolset",
+		meta=(
+			EditCondition = "ModuleType != EOSCT_ModuleType::NOTE", 
+			EditConditionHides))
+	bool Pack = false;
+	
+};
+
 USTRUCT(BlueprintType)
 struct FOSCT_Receiver
 {
@@ -117,7 +143,6 @@ struct FOSCT_Receiver
 	// Default constructor (required by GENERATED_BODY)
 	FOSCT_Receiver() {}
 };
-
 
 
 USTRUCT()
