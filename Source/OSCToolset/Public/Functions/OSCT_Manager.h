@@ -27,16 +27,16 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
 	static void AddReceiver(UObject* WorldContextObject, FOSCT_Receiver Receiver, UObject* Owner);
 	
-	UFUNCTION(BlueprintCallable, Category = "OSCToolset", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
 	static void AddManyReceivers(UObject* WorldContextObject, TArray<FOSCT_Receiver> Receivers, UObject* Owner);
 
-	UFUNCTION(BlueprintCallable, Category = "OSCToolset", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
 	static void AddReceiversFromDataTable(UObject* WorldContextObject, UDataTable* InTable, UObject* Owner);
 	
-	UFUNCTION(BlueprintCallable, Category = "OSCToolset", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
 	static void RemoveReceiver(UObject* WorldContextObject, FOSCT_Receiver Receiver, UObject* Owner);
 	
-	UFUNCTION(BlueprintCallable, Category = "OSCToolset", meta = (WorldContext = "WorldContextObject"))
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers", meta = (WorldContext = "WorldContextObject"))
 	static void RemoveAllReceivers(UObject* WorldContextObject);
 	
 	UFUNCTION(BlueprintPure, Category = "OSCToolset|Receivers", meta = (DisplayName = "Get Receiver Address", CompactNodeTitle = "Address"))
@@ -82,5 +82,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Senders", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
 	static void SendString(UObject * WorldContextObject, UPARAM(ref) FOSCT_Sender& Sender, const FString& Value, UObject* Owner);
-
 };
