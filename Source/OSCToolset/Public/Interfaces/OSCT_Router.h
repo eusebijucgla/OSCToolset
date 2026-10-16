@@ -33,6 +33,10 @@ public:
 	UFUNCTION(BlueprintNativeEvent, Category = "OSCToolset|Base")
 	void OnReceiverRemoved(const FOSCT_Receiver& Receiver);
 	
+	UFUNCTION(BlueprintNativeEvent, Category = "OSCToolset|Base")
+	void OnOSCToolsetInitialized();
+	
+	
 	//Receivers
 	
 	// Event

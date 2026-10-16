@@ -300,9 +300,18 @@ void UOSCT_Master::InitializeOSC()
     }
     if (OSCT_Clients.Num() > 0)
     {
-        OnInitOSCT.Broadcast();
+        OnOSCToolsetInitialized.Broadcast();
         SendOSCTBaseMessage(OSCT_Init_addr);
         UE_LOG(OSCToolset, Log, TEXT("Initialize OSC from OSCT_Master"));
+        
+        //Call OSCT_Router Initialized event:
+        if (UGameInstance* GI = GetWorld()->GetGameInstance())
+        {
+            if (GI->Implements<UOSCT_Router>())
+            {
+                IOSCT_Router::Execute_OnOSCToolsetInitialized(GI);
+            }
+        }
     }
 }
 
@@ -475,7 +484,7 @@ void UOSCT_Master::shutdown_OSCT_Master()
 {
     // RemoveAllReceivers();
     
-    OnShutdownOSCT.Broadcast();
+    OnOSCToolsetShutdown.Broadcast();
     
 	for (UOSCClient* Client : OSCT_Clients)
 	{
