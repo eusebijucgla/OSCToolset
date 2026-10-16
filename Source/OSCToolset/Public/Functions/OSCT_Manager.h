@@ -21,7 +21,10 @@ private:
 	UFUNCTION()
 	static UOSCT_Master* GetMaster(const UObject* WorldContextObject);
 	
-	UFUNCTION(BlueprintCallable, Category = "OSCToolset", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
+public:
+	
+	//Receivers
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
 	static void AddReceiver(UObject* WorldContextObject, FOSCT_Receiver Receiver, UObject* Owner);
 	
 	UFUNCTION(BlueprintCallable, Category = "OSCToolset", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
@@ -36,6 +39,20 @@ private:
 	UFUNCTION(BlueprintCallable, Category = "OSCToolset", meta = (WorldContext = "WorldContextObject"))
 	static void RemoveAllReceivers(UObject* WorldContextObject);
 	
+	UFUNCTION(BlueprintPure, Category = "OSCToolset|Receivers", meta = (DisplayName = "Get Receiver Address", CompactNodeTitle = "Address"))
+	static FString GetReceiverAddress(const FOSCT_Receiver& Receiver);
+
+	//Proxies
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers|Proxy", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
+	static UOSCT_Proxy* GetReceiverProxy(UObject* WorldContextObject, FOSCT_Receiver Receiver, UObject* Owner);
+	
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers|Proxy", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
+	static TArray<UOSCT_Proxy*> GetManyReceiverProxies(UObject* WorldContextObject, TArray<FOSCT_Receiver> Receivers, UObject* Owner);
+	
+	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Receivers|Proxy", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
+	static TArray<UOSCT_Proxy*> GetReceiverProxiesFromDataTable(UObject* WorldContextObject, UDataTable* InTable, UObject* Owner);
+	
+	//Senders
 	UFUNCTION(BlueprintCallable, Category = "OSCToolset|Senders", meta = (WorldContext = "WorldContextObject", DefaultToSelf = "Owner", HidePin = "Owner"))
 	static void SendEvent(UObject * WorldContextObject, UPARAM(ref) FOSCT_Sender& Sender, UObject* Owner);
 	

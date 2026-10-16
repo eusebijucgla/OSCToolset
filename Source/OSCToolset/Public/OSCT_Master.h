@@ -13,6 +13,7 @@
 #include "OSCT_Settings.h"
 #include "OSCT_ETypes.h"
 #include "OSCT_Modules.h"
+#include "OSCT_Proxy.h"
 #include "Functions/OSCT_Functions.h"
 #include "Interfaces/OSCT_Router.h"
 #include "UI/SOSCT_Menu.h"
@@ -56,6 +57,17 @@ public:
 	
 	UFUNCTION()
 	void RemoveAllReceivers();
+
+	UFUNCTION()
+	UOSCT_Proxy* GetReceiverProxy(const FOSCT_Receiver& Receiver, UObject* Owner);
+	
+	UFUNCTION()
+	TArray<UOSCT_Proxy*> GetManyReceiverProxies(const TArray<FOSCT_Receiver>& Receivers, UObject* Owner);
+	
+	UFUNCTION()
+	TArray<UOSCT_Proxy*> GetReceiverProxiesFromDataTable(UDataTable* InTable, UObject* Owner);
+
+	
 	
 	////// SENDERS
 	UFUNCTION()
@@ -97,11 +109,15 @@ public:
 	virtual void Deinitialize() override;
 	
 	void ToggleOSCTMenu();
+	
 protected:
 	// Event handler for the level change
 	void OnLevelChanged(const FString& LevelName);
 
 private:
+	// Maps an OSC address string to its unified proxy container
+	UPROPERTY()
+	TMap<FName, UOSCT_Proxy*> ReceiverProxies;
 	
 	/// Modules
 	TMap<FName, TArray<FOSCT_EventLink>> EventLinks;
@@ -140,6 +156,9 @@ private:
 	TSet<FName> TickableAddresses; //For checking during tick event.
 	
 	void CleanupLinks();
+	
+	// Factory helper to grab an existing proxy or create a new one on the fly
+	UOSCT_Proxy* GetOrCreateProxy(const FOSCT_Receiver& Receiver);
 	
 	template<typename TLink>
 	void AddReceiverLink(TMap<FName, TArray<TLink>>& TargetMap, const FName& AddressKey, const FOSCT_Receiver& Receiver, UObject* Owner)

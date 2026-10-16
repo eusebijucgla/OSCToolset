@@ -57,6 +57,40 @@ void UOSCT_Manager::RemoveAllReceivers(UObject* WorldContextObject)
 	}
 }
 
+UOSCT_Proxy* UOSCT_Manager::GetReceiverProxy(UObject* WorldContextObject, FOSCT_Receiver Receiver, UObject* Owner)
+{
+	if (UOSCT_Master* Master = GetMaster(WorldContextObject))
+	{
+		return Master->GetReceiverProxy(Receiver, Owner);
+	}
+	return nullptr;
+}
+
+TArray<UOSCT_Proxy*> UOSCT_Manager::GetManyReceiverProxies(UObject* WorldContextObject,	TArray<FOSCT_Receiver> Receivers, UObject* Owner)
+{
+	if (UOSCT_Master* Master = GetMaster(WorldContextObject))
+	{
+		return Master->GetManyReceiverProxies(Receivers, Owner);
+	}
+	return TArray<UOSCT_Proxy*>();
+}
+
+TArray<UOSCT_Proxy*> UOSCT_Manager::GetReceiverProxiesFromDataTable(UObject* WorldContextObject,
+	UDataTable* InTable, UObject* Owner)
+{
+	if (UOSCT_Master* Master = GetMaster(WorldContextObject))
+	{
+		return Master->GetReceiverProxiesFromDataTable(InTable, Owner);
+	}
+	return TArray<UOSCT_Proxy*>();
+
+}
+
+FString UOSCT_Manager::GetReceiverAddress(const FOSCT_Receiver& Receiver)
+{
+	return Receiver.Address;
+}
+
 void UOSCT_Manager::SendEvent(UObject* WorldContextObject, FOSCT_Sender& Sender, UObject* Owner)
 {
 	if (UOSCT_Master* Master = GetMaster(WorldContextObject))

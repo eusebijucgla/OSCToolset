@@ -349,7 +349,9 @@ void UOSCT_Master::CleanupLinks()
     ReceiverMap.Empty();
     AddressToType.Empty();
     TickableAddresses.Empty();
+    ReceiverProxies.Empty();
 }
+
 
 void UOSCT_Master::SendOSCTBaseMessage(const FString& Message)
 {   
@@ -507,26 +509,6 @@ void UOSCT_Master::shutdown_OSCT_Master()
     
     OSCT_Clients.Empty();
     
-    // if (IsValid(OSCT_Client))
-    // {
-    //     FOSCAddress Addr = UOSCManager::ConvertStringToOSCAddress(OSCT_Shutdown_addr);
-    //     
-    //     // Always check if the address is valid before sending
-    //     if (!Addr.GetFullPath().IsEmpty())
-    //     {
-    //         FOSCMessage Msg;
-    //         UOSCManager::SetOSCMessageAddress(Msg, Addr);
-    //         
-    //         UOSCManager::AddString(Msg, TEXT("OSCT Shutdown"));
-    //
-    //         OSCT_Client->SendOSCMessage(Msg);
-    //     }
-    //
-    //     // Do NOT call ConditionalBeginDestroy(). 
-    //     // Just null it; the Subsystem's death will handle the rest.
-    //     OSCT_Clients.Empty();
-    // }
-
     if (IsValid(OSCT_Server))
     {
         // Stop listening immediately
@@ -731,6 +713,78 @@ void UOSCT_Master::Send_String(FOSCT_Sender& Sender, const FString& Value, UObje
         UOSCManager::SetOSCMessageAddress(Msg, Sender.CachedFullAddress);
         BroadcastOSC(Msg);
     }
+}
+
+UOSCT_Proxy* UOSCT_Master::GetOrCreateProxy(const FOSCT_Receiver& Receiver)
+{
+    FString FormattedAddress;
+    if (!UOSCT_Functions::FormatAddress(Receiver.Role, Receiver.ModuleType, Receiver.Pack, Receiver.Address, FormattedAddress))
+    {
+        return nullptr;
+    }
+    FName AddressKey = FName(*FormattedAddress);
+    
+    if (UOSCT_Proxy** Found = ReceiverProxies.Find(AddressKey))
+    {
+        return *Found;
+    }
+
+    // Create a new lightweight UObject proxy managed by this subsystem
+    UOSCT_Proxy* NewProxy = NewObject<UOSCT_Proxy>(this);
+    NewProxy->ReceiverConfig = Receiver;
+    UE_LOG(OSCToolset, Log, TEXT("Created a new receiver proxy for: %s"), *FormattedAddress);
+
+    ReceiverProxies.Add(AddressKey, NewProxy);
+    return NewProxy;
+}
+
+UOSCT_Proxy* UOSCT_Master::GetReceiverProxy(const FOSCT_Receiver& Receiver, UObject* Owner)
+{
+    if (!Owner) return nullptr;
+    return GetOrCreateProxy(Receiver);
+}
+
+TArray<UOSCT_Proxy*> UOSCT_Master::GetManyReceiverProxies(const TArray<FOSCT_Receiver>& Receivers, UObject* Owner)
+{
+    TArray<UOSCT_Proxy*> ResultProxies;
+    ResultProxies.Reserve(Receivers.Num());
+
+    for (const FOSCT_Receiver& Receiver : Receivers)
+    {
+        if (UOSCT_Proxy* FoundProxy = GetReceiverProxy(Receiver, Owner))
+        {
+            ResultProxies.Add(FoundProxy);
+        }
+    }
+    return ResultProxies;
+}
+
+TArray<UOSCT_Proxy*> UOSCT_Master::GetReceiverProxiesFromDataTable(UDataTable* InTable, UObject* Owner)
+{
+    if (!InTable)
+    {
+        return TArray<UOSCT_Proxy*>();
+    }
+    TArray<FOSCT_Receiver> ExtractedReceivers;
+    // Ensure the table uses our struct (or a row struct containing/convertible to FOSCT_Receiver)
+    if (InTable->RowStruct->IsChildOf(FOSCT_ReceiverRow::StaticStruct()))
+    {
+        static const FString ContextString(TEXT("OSCT Receiver Rows"));
+        TArray<FOSCT_ReceiverRow*> Rows;
+        InTable->GetAllRows<FOSCT_ReceiverRow>(ContextString, Rows);
+        
+        ExtractedReceivers.Reserve(Rows.Num());
+
+        for (FOSCT_ReceiverRow* RowData : Rows)
+        {
+            if (RowData)
+            {
+                FOSCT_Receiver NewReceiver(*RowData);
+                ExtractedReceivers.Add(NewReceiver);
+            }
+        }
+    }
+    return GetManyReceiverProxies(ExtractedReceivers, Owner);
 }
 
 
