@@ -30,10 +30,6 @@ I am also working on an Ableton bindig which you can get updates for when it is 
 # Downloads
 I provide the latest 3 Unreal Engine versions build for Windows. But you can package this Plugin for MacOS or Linux if you hve the machine to do so.
 
-From this repository releases:
-- [Releases](https://github.com/eusebijucgla/OSCToolset/releases)
-
-Or download them from my website:
+You can download the packaged versions from my website:
 - [OSCToolset](https://www.eusebijucgla.com/tools/osctoolset/unrealengine/)
-
-- Gives access to [discord](https://www.eusebijucgla.com/tools/osctoolset/unrealengine/discord)
+- Gives access to [discord](https://www.eusebijucgla.com/tools/osctoolset/unrealengine/discord/)
