@@ -18,6 +18,7 @@
 
 #include "Engine/World.h" // Required for UWorld
 #include "Engine/Engine.h" //Required for GEngine
+#include "Engine/GameInstance.h" // Required for UGameInstance
 #include "Engine/GameViewportClient.h" // Required for GameViewport
 #include "CoreMinimal.h"
 
